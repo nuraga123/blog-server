@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { validationResult } from 'express-validator'
 import UserModel from '../models/Users.js'
 import { returnUserData, checkUser, duplicateUserError, errorsMessage } from '../utils/checkAuth.js'
 
@@ -44,7 +43,11 @@ export const login = async (req, res) => {
 
     if (user) {
       const isValidPass = await bcrypt.compare(password, user._doc.passwordHash);
-      if (!isValidPass) return res.status(403).json({ message: 'Invalid Password' });
+
+      if (!isValidPass) return res.status(404).send({
+        message: 'Неверный пароль'
+      });
+
       const token = tokenGenerate(user._id);
       return res.json({ ...returnUserData(user), token });
     }
@@ -60,5 +63,14 @@ export const getMe = async (req, res) => {
     return res.json({ ...returnUserData(user) });
   } catch (error) {
     errorsMessage(error, res, "getMe", 500)
+  }
+}
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    return res.json(users.map(user => returnUserData(user)));
+  } catch (error) {
+    errorsMessage(error, res, "getUsersAllEmail", 500)
   }
 }
