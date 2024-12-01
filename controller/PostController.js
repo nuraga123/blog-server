@@ -1,6 +1,12 @@
 import PostModel from '../models/Posts.js';
 import UserModel from '../models/Users.js';
-import { returnUserData, checkUser, dateFormat, errorsMessage } from '../utils/checkAuth.js'
+import {
+  returnUserData,
+  checkUser,
+  checkUserPost,
+  dateFormat,
+  errorsMessage,
+} from '../utils/checkAuth.js'
 
 export const getLastTags = async (req, res) => {
   try {
@@ -56,22 +62,24 @@ export const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find().populate('user').exec();
     const dataPosts = posts.map(post => {
+      const { notUser, notIdUser } = checkUserPost(post)
+
       return {
         _id: post._id,
         title: post.title,
         text: post.text,
         tags: post.tags,
         viewsCount: post.viewsCount,
-        user: {
+        date: dateFormat(post.createdAt),
+        imageUrl: post.imageUrl,
+        user: notIdUser ? notUser : {
           _id: post.user._id,
           username: post.user.username,
           email: post.user.email,
           date: dateFormat(post.user.createdAt),
           userImageUrl: post.user.userImageUrl
         },
-        date: dateFormat(post.createdAt),
-        imageUrl: post.imageUrl,
-      };
+      }
     });
 
     return res.send(dataPosts)
@@ -89,12 +97,20 @@ export const getPostByIdAndUpdateViewsCount = async (req, res) => {
 
     if (!postId) errorsMessage(postId, res, 'ID не найдена!', 404);
 
-    console.log("postId:", postId);
-
     const updatedPost = await PostModel.findByIdAndUpdate(postId, { $inc: { viewsCount: 1 } }, { new: true }).populate("user").exec();
 
-    updatedPost ? res.json(updatedPost) : errorsMessage(updatedPost, res, "Статья не найдена", 404);
+    if (!updatedPost) return errorsMessage(updatedPost, res, "Статья не найдена", 404);
 
+    const { notIdUser, notUser } = checkUserPost(updatedPost)
+
+    const updatedNotUserPost = {
+      ...updatedPost._doc,
+      user: notUser
+    }
+
+    return notIdUser
+      ? res.json(updatedNotUserPost)
+      : res.json(updatedPost)
   } catch (err) {
     errorsMessage(err, res, 'Ошибка при поиске статьи!', 500);
   }

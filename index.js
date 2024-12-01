@@ -5,7 +5,7 @@ import cors from "cors"
 import checkAuth, { errorsMessage } from "./utils/checkAuth.js";
 import { registerValidation, loginValidation } from "./validations/auth.js";
 import { postCreateValidation } from "./validations/post.js";
-import { register, login, getMe, getUsers } from "./controller/UserController.js"
+import { register, login, getMe, getUsers, checkAdmin, createResetPassword, updatePassword } from "./controller/UserController.js"
 import {
   createPost,
   getPosts,
@@ -52,8 +52,16 @@ app.post('/auth/login', loginValidation, handleValidationError, login);
 // get user me 
 app.get('/auth/me', checkAuth, getMe);
 
-// get user me 
+// get users
 app.get('/users', getUsers);
+
+// check admin
+app.post('/check-admin', checkAuth, checkAdmin);
+
+// create reset password toekn
+app.post('/add-reset-password', checkAuth, createResetPassword)
+
+app.post("/update-password", updatePassword)
 
 /* uploads */
 
