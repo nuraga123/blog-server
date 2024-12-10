@@ -20,11 +20,19 @@ export const tokenGenerate = ({ _id }) => {
 
 export const register = async (req, res) => {
   try {
-    const notFoto = 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1';
-    const { username, email, password, userImageUrl } = req.body;
 
-    if (!username || !email || !password) {
+    const notFoto = 'https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/3da39-no-user-image-icon-27.png?fit=500%2C500&ssl=1';
+    const { username, email, password, password_confirm, userImageUrl } = req.body;
+
+    console.log(req.body);
+    console.log(req.body.password);
+
+    if (!username || !email || !password || !password_confirm) {
       return res.status(400).json({ message: 'Все поля должны быть заполнены!' });
+    }
+
+    if (password !== password_confirm) {
+      return res.status(400).json({ message: `Пароли не совпадают!` });
     }
 
     const userDuplicate = await duplicateUserError({ username, email });
@@ -50,7 +58,7 @@ export const register = async (req, res) => {
     returnUserData(user)
     return res.json({ ...returnUserData(user), token });
   } catch (error) {
-    errorsMessage(error, res, "register", 500)
+    errorsMessage(error, res, "register", 500);
   }
 }
 

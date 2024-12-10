@@ -43,8 +43,10 @@ export const returnUserData = (user) => {
 export const checkUser = (user, res) => user ? user : res.status(403).json({ message: 'Нет пользователя !' });
 
 export const duplicateUserError = async ({ username, email }) => {
-  const userDuplicate = await UserModel.findOne({ username, email })
-  if (userDuplicate) return `Уже существует пользователь c таким именем или email`
+  const userDuplicate = await UserModel.findOne({ username })
+  if (userDuplicate) return `Уже существует пользователь c таким именем`
+  const userDuplicateEmail = await UserModel.findOne({ email })
+  if (userDuplicateEmail) return `Уже существует пользователь с таким email`
 }
 
 export const errorsMessage = (error, res, resText, statusCode) => {
