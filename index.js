@@ -1,9 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import multer from "multer";
 
 import checkAuth, { errorsMessage } from "./utils/checkAuth.js";
 import { registerValidation, loginValidation } from "./validations/auth.js";
+import handleValidationError from "./utils/handleValidationError.js";
 import { postCreateValidation } from "./validations/post.js";
 import {
   register,
@@ -22,9 +24,12 @@ import {
   updatePost,
   getLastTags,
 } from "./controller/PostController.js";
-import multer from "multer";
-import handleValidationError from "./utils/handleValidationError.js";
-import { addMaterial, getMaterials } from "./controller/MaterialController.js";
+import {
+  addMaterial,
+  getMaterials,
+  getPaginatedMaterials,
+  updateMaterial,
+} from "./controller/MaterialController.js";
 
 const app = express();
 
@@ -70,7 +75,7 @@ app.get("/users", getUsers);
 // check admin
 app.post("/check-admin", checkAuth, checkAdmin);
 
-// create reset password toekn
+// create reset password token
 app.post("/add-reset-password", checkAuth, createResetPassword);
 
 app.post("/update-password", updatePassword);
@@ -111,8 +116,13 @@ app.get("/tags", checkAuth, getLastTags);
 
 /* Material */
 
-app.get("/material", getMaterials);
+app.get("/materials", getMaterials);
+
+app.get("/materials/paginated", getPaginatedMaterials);
+
 app.post("/material/add", addMaterial);
+
+app.put("/material/:id", updateMaterial);
 
 app.listen(4444, (err) => {
   if (err) console.log(err);

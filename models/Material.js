@@ -30,7 +30,7 @@ const MaterialSchema = new mongoose.Schema(
           "gram", // грамм
           "ton", // тонна
         ],
-        message: "{VALUE} не является допустимым значением для поля unit.",
+        message: `wrong_unit`,
       },
     },
   },
