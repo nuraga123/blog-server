@@ -29,6 +29,7 @@ import {
   getMaterials,
   getPaginatedMaterials,
   updateMaterial,
+  searchMaterialStr,
 } from "./controller/MaterialController.js";
 
 const app = express();
@@ -121,6 +122,8 @@ app.get("/materials", getMaterials);
 app.get("/materials/paginated", getPaginatedMaterials);
 
 app.post("/material/add", addMaterial);
+
+app.post("/material/search", searchMaterialStr);
 
 app.put("/material/:id", updateMaterial);
 

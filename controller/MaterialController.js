@@ -156,3 +156,23 @@ export const getPaginatedMaterials = async (req, res) => {
     return res.status(500).json({ message: "error_server" });
   }
 };
+
+export const searchMaterialStr = async (req, res) => {
+  try {
+    const { str } = req.body;
+
+    // Проверка на наличие строки для поиска
+    if (!str || typeof str !== "string") {
+      return res.status(400).json({ message: "invalid_search_string" });
+    }
+
+    const findMaterials = await MaterialModel.find({
+      name: { $regex: str, $options: "i" },
+    });
+
+    return res.status(200).json(findMaterials);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "error_server" });
+  }
+};
