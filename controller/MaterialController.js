@@ -136,6 +136,7 @@ export const getPaginatedMaterials = async (req, res) => {
     }
 
     const skip = (checkPage - 1) * limit;
+    console.log(skip);
 
     const totalCount = await MaterialModel.countDocuments();
     const totalPages = Math.ceil(totalCount / limit);
@@ -175,4 +176,20 @@ export const searchMaterialStr = async (req, res) => {
     console.log(error);
     return res.status(500).json({ message: "error_server" });
   }
+};
+
+export const getMaterialsById = async (req, res) => {
+  try {
+    const materialId = req.params.id;
+
+    const material = await MaterialModel.findById(materialId);
+
+    if (!material) {
+      return res.status(400).json({
+        message: "not_material",
+      });
+    }
+
+    return res.status(200).json(material);
+  } catch (error) {}
 };

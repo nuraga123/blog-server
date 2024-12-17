@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import multer from "multer";
+import os from "os";
 
 import checkAuth, { errorsMessage } from "./utils/checkAuth.js";
 import { registerValidation, loginValidation } from "./validations/auth.js";
@@ -30,6 +31,7 @@ import {
   getPaginatedMaterials,
   updateMaterial,
   searchMaterialStr,
+  getMaterialsById,
 } from "./controller/MaterialController.js";
 
 const app = express();
@@ -57,8 +59,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.get("", (req, res) => res.send("hello nuraga"));
-
 /* USER */
 
 // register
@@ -82,7 +82,6 @@ app.post("/add-reset-password", checkAuth, createResetPassword);
 app.post("/update-password", updatePassword);
 
 /* uploads */
-
 app.post("/uploads", checkAuth, upload.single("image"), (req, res) => {
   try {
     res.json({
@@ -119,15 +118,21 @@ app.get("/tags", checkAuth, getLastTags);
 
 app.get("/materials", getMaterials);
 
-app.get("/materials/paginated", getPaginatedMaterials);
+app.get("/materials/:id", getMaterialsById);
 
-app.post("/material/add", addMaterial);
+app.get("/materials-paginated", getPaginatedMaterials);
 
-app.post("/material/search", searchMaterialStr);
+app.post("/materials/add", addMaterial);
 
-app.put("/material/:id", updateMaterial);
+app.post("/materials/search", searchMaterialStr);
+
+app.put("/materials/:id", updateMaterial);
+
+const IPv4 = os.networkInterfaces()["Ethernet 2"][1]?.address;
+app.get("", (req, res) => res.send("hello nuraga"));
 
 app.listen(4444, (err) => {
   if (err) console.log(err);
   console.log("Server Starting");
+  console.log(`http://${IPv4}:4444`);
 });
