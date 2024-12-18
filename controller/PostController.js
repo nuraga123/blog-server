@@ -29,8 +29,6 @@ export const createPost = async (req, res) => {
     const findUser = await UserModel.findById(req.userId);
     checkUser(findUser, res);
 
-    console.log(returnUserData(findUser))
-
     const doc = new PostModel({
       title,
       text,
