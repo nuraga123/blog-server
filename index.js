@@ -131,7 +131,8 @@ app.put("/materials/:id", updateMaterial);
 const IPv4 = os.networkInterfaces();
 const enternat2 =
   IPv4["Ethernet 2"] === undefined ? null : IPv4["Ethernet 2"][1]?.address;
-app.get("", (req, res) => res.send("hello nuraga"));
+
+app.get("", (req, res) => res.send("Server Starting"));
 
 app.listen(4444, (err) => {
   if (err) console.log(err);

@@ -5,8 +5,6 @@ const BarnSchema = new mongoose.Schema(
     barnName: {
       type: String,
       required: true,
-      unique: true,
-      trim: true,
     },
     material: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,17 +16,17 @@ const BarnSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    count: {
+    stock: {
       type: Number,
       required: true,
       default: 0,
       min: 0,
     },
-    brokenCount: {
+    brokenStock: {
       type: mongoose.Types.Decimal128,
       required: true,
     },
-    brokenCount: {
+    lostStock: {
       type: mongoose.Types.Decimal128,
       required: true,
     },
