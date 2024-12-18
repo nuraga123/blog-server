@@ -129,12 +129,12 @@ app.post("/materials/search", searchMaterialStr);
 app.put("/materials/:id", updateMaterial);
 
 const IPv4 = os.networkInterfaces();
-// const enternat2 = IPv4["Ethernet 2"] || "";
-// ["Ethernet 2"][1]?.address;
+const enternat2 =
+  IPv4["Ethernet 2"] === undefined ? null : IPv4["Ethernet 2"][1]?.address;
 app.get("", (req, res) => res.send("hello nuraga"));
 
 app.listen(4444, (err) => {
   if (err) console.log(err);
   console.log("Server Starting");
-  console.log(IPv4)
+  console.log(`http://${enternat2}:4444`);
 });
