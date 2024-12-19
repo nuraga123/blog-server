@@ -5,19 +5,19 @@ const BarnSchema = new mongoose.Schema(
     barnName: {
       type: String,
       required: true,
-    },
-    material: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Material",
-      required: true,
+      unique: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    materialName: {
+      type: String,
+      required: true,
+    },
     stock: {
-      type: Number,
+      type: mongoose.Types.Decimal128,
       required: true,
       default: 0,
       min: 0,
@@ -25,10 +25,14 @@ const BarnSchema = new mongoose.Schema(
     brokenStock: {
       type: mongoose.Types.Decimal128,
       required: true,
+      default: 0,
+      min: 0,
     },
     lostStock: {
       type: mongoose.Types.Decimal128,
       required: true,
+      default: 0,
+      min: 0,
     },
     location: {
       type: String,

@@ -16,19 +16,18 @@ const MaterialSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Decimal128,
       required: true,
     },
+    type: {
+      type: String,
+    },
     unit: {
       type: String,
       required: true,
       enum: {
         values: [
-          "cm", // сантиметр
-          "meter", // метр
-          "km", // километр
-          "kilogram", // кг
           "piece", // штука
-          "liter", // литр
-          "gram", // грамм
-          "ton", // тонна
+          "m", // метр
+          "kg", // кг
+          "lt", // литр
         ],
         message: `wrong_unit`,
       },

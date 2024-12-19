@@ -11,7 +11,7 @@ export default (req, res, next) => {
     const result = (req.headers.authorization || "").replace(/Bearer\s?/, "");
     if (result) {
       try {
-        const decoded = jwt.verify(result, "secret123");
+        const decoded = jwt.verify(result, process.env.ADMIN_SECRET);
         req.userId = decoded._id;
         next();
       } catch (error) {
@@ -42,10 +42,13 @@ export const checkUser = (user, res) =>
   user ? user : res.status(403).json({ message: "Нет пользователя !" });
 
 export const duplicateUserError = async ({ username, email }) => {
-  const userDuplicate = await UserModel.findOne({ username });
-  if (userDuplicate) return `Уже существует пользователь c таким именем`;
+  const duplicateName = await UserModel.findOne({ username });
+  if (duplicateName) return "name_exists";
+
   const userDuplicateEmail = await UserModel.findOne({ email });
-  if (userDuplicateEmail) return `Уже существует пользователь с таким email`;
+  if (userDuplicateEmail) return "email_exists";
+
+  return 0;
 };
 
 export const errorsMessage = (error, res, resText, statusCode) => {

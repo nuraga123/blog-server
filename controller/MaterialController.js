@@ -2,6 +2,21 @@ import { mongo } from "mongoose";
 import MaterialModel from "../models/Material.js";
 import { priceFormat } from "../utils/price.js";
 
+const checkBody = ({ name, azencoCode, price, unit }) => {
+  const checkCondition = !name || !azencoCode || !price || !unit;
+
+  if (typeof priceFormat(price) === "string") {
+    return priceFormat(price);
+  }
+
+  return checkCondition
+    ? `not${!name ? "_name" : ""}${!azencoCode ? "_azencoCode" : ""}${
+        !price ? "_price" : ""
+      }${!unit ? "_unit" : ""}`
+    : "";
+};
+
+// поиск  дублированого товара
 export const findDuplicatedMaterial = async ({ name, azencoCode, res }) => {
   try {
     const duplicatedName = await MaterialModel.findOne({ name });
@@ -22,6 +37,7 @@ export const findDuplicatedMaterial = async ({ name, azencoCode, res }) => {
   }
 };
 
+// создание продукта
 export const addMaterial = async (req, res) => {
   try {
     const { name, azencoCode, price, unit } = req.body;
@@ -81,19 +97,6 @@ export const addMaterial = async (req, res) => {
   }
 };
 
-export const getMaterials = async (req, res) => {
-  try {
-    const material = await MaterialModel.find();
-
-    return res.status(200).json(material);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "не смог найти материалы",
-    });
-  }
-};
-
 // Метод для обновления материала
 export const updateMaterial = async (req, res) => {
   try {
@@ -120,6 +123,20 @@ export const updateMaterial = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Ошибка при обновлении материала",
+    });
+  }
+};
+
+// получение всех продуктов
+export const getMaterials = async (req, res) => {
+  try {
+    const material = await MaterialModel.find();
+
+    return res.status(200).json(material);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "не смог найти материалы",
     });
   }
 };

@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     resetPasswordToken: String,
     userImageUrl: String,
+    adminCheck: { type: Boolean, default: false },
   },
   {
     timestamps: true,

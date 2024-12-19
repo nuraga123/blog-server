@@ -9,13 +9,14 @@ import { registerValidation, loginValidation } from "./validations/auth.js";
 import handleValidationError from "./utils/handleValidationError.js";
 import { postCreateValidation } from "./validations/post.js";
 import {
-  register,
+  registerAndCheckAdmin,
   login,
   getMe,
   getUsers,
   checkAdmin,
   createResetPassword,
   updatePassword,
+  confirmAdminUser,
 } from "./controller/UserController.js";
 import {
   createPost,
@@ -61,8 +62,15 @@ const upload = multer({ storage });
 
 /* USER */
 
-// register
-app.post("/auth/register", registerValidation, handleValidationError, register);
+// register and check admin
+app.post(
+  "/auth/register",
+  registerValidation,
+  handleValidationError,
+  registerAndCheckAdmin
+);
+
+app.post("/auth/confirm", checkAuth, confirmAdminUser);
 
 // login
 app.post("/auth/login", loginValidation, handleValidationError, login);
