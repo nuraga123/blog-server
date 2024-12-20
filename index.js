@@ -38,9 +38,7 @@ import {
 const app = express();
 
 mongoose
-  .connect(
-    "mongodb+srv://azencodatabase:uzumymw1998@cluster0.lhqt9.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(process.env.MONGODB_URL)
   .then(() => console.log("DB OK"))
   .catch((err) => console.log("error db", err));
 
@@ -137,13 +135,17 @@ app.post("/materials/search", searchMaterialStr);
 app.put("/materials/:id", updateMaterial);
 
 const IPv4 = os.networkInterfaces();
+
 const enternat2 =
   IPv4["Ethernet 2"] === undefined ? null : IPv4["Ethernet 2"][1]?.address;
+
+const enternat4 =
+  IPv4["Ethernet 4"] === undefined ? null : IPv4["Ethernet 4"][1]?.address;
 
 app.get("", (req, res) => res.send("Server Starting"));
 
 app.listen(4444, (err) => {
   if (err) console.log(err);
   console.log("Server Starting");
-  console.log(`http://${enternat2}:4444`);
+  console.log(`http://${enternat2 || enternat4}:4444`);
 });

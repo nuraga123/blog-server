@@ -3,11 +3,11 @@ import MaterialModel from "../models/Material.js";
 import { priceFormat } from "../utils/price.js";
 
 const checkBody = ({ name, azencoCode, price, unit }) => {
-  const checkCondition = !name || !azencoCode || !price || !unit;
-
   if (typeof priceFormat(price) === "string") {
     return priceFormat(price);
   }
+
+  const checkCondition = !name || !azencoCode || !price || !unit;
 
   return checkCondition
     ? `not${!name ? "_name" : ""}${!azencoCode ? "_azencoCode" : ""}${
@@ -42,36 +42,26 @@ export const addMaterial = async (req, res) => {
   try {
     const { name, azencoCode, price, unit } = req.body;
 
-    if (!name || !azencoCode || !price || !unit) {
-      return res.status(400).json({
-        message: `not${!name ? "_name" : ""}${
-          !azencoCode ? "_azencoCode" : ""
-        }${!price ? "_price" : ""}${!unit ? "_unit" : ""}`,
-      });
-    }
+    const check = checkBody({ name, azencoCode, price, unit });
+
+    if (check) return res.status(400).json({ message: check });
 
     const duplMaterial = await findDuplicatedMaterial({
+      res,
       name,
       azencoCode,
-      res,
     });
 
     if (duplMaterial) return duplMaterial;
 
-    if (typeof priceFormat(price) === "string") {
-      return res.status(400).json({ message: priceFormat(price) });
-    } else {
-      const material = await MaterialModel.create({
-        name,
-        azencoCode,
-        price: priceFormat(price),
-        unit,
-      });
+    const material = await MaterialModel.create({
+      name,
+      unit,
+      azencoCode,
+      price: priceFormat(price),
+    });
 
-      console.log(material);
-
-      return res.status(201).json(material);
-    }
+    return res.status(201).json(material);
   } catch (error) {
     console.log(error);
     const { MongoServerError } = mongo;
