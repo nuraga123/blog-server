@@ -48,13 +48,15 @@
     </style>
   </head>
   <body>
-    <h1>Добро пожаловать на сервер!</h1>
+    <h1>Добро пожаловать на Azenco сервер!</h1>
     <div id="status-circle" class="status-circle green"></div>
     <div class="info">
       <p>Дата запуска сервера: <span id="start-time"></span></p>
       <p>Время работы сервера: <span id="uptime"></span></p>
     </div>
     <script>
+      const serverResult = fetch("https://blog-server-iyxb.onrender.com/");
+      console.log(serverResult);
       const statusCircle = document.getElementById("status-circle");
       const serverStatus = "running"; // 'running', 'stopped', 'waiting'
 
