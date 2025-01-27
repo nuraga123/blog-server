@@ -4,6 +4,10 @@ import cors from "cors";
 import multer from "multer";
 import os from "os";
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import checkAuth, { errorsMessage } from "./utils/checkAuth.js";
 import { registerValidation, loginValidation } from "./validations/auth.js";
 import handleValidationError from "./utils/handleValidationError.js";
@@ -35,6 +39,9 @@ import {
   getMaterialsById,
 } from "./controller/MaterialController.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const serverStartTime = new Date();
 const app = express();
 
 mongoose
@@ -142,7 +149,24 @@ const enternat2 =
 const enternat4 =
   IPv4["Ethernet 4"] === undefined ? null : IPv4["Ethernet 4"][1]?.address;
 
-app.get("", (req, res) => res.send("Server Starting"));
+// frontend part
+app.get("", (req, res) => {
+  const uptime = Math.floor(process.uptime());
+  const filePath = path.join(__dirname, "public", "status.html");
+
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      res.status(500).send("Ошибка загрузки HTML файла");
+      return;
+    }
+
+    const htmlWithDynamicData = data
+      .replace("Будет передана сервером", serverStartTime.toLocaleString("ru-RU"))
+      .replace("Будет передано сервером", `${Math.floor(uptime / 60)} мин ${uptime % 60} сек`);
+
+    res.send(htmlWithDynamicData);
+  });
+});
 
 app.listen(4444, (err) => {
   if (err) console.log(err);

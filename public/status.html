@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Статус сервера</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        color: #333;
+      }
+      .status-circle {
+        width: 100px;
+        height: 100px;
+        margin: 20px auto;
+        border-radius: 50%;
+        background-color: green;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+      .green {
+        background-color: green;
+      }
+      .red {
+        background-color: red;
+      }
+      .yellow {
+        background-color: yellow;
+      }
+      .info {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Добро пожаловать на сервер!</h1>
+    <div id="status-circle" class="status-circle green"></div>
+    <div class="info">
+      <p>Дата запуска сервера: <span id="start-time"></span></p>
+      <p>Время работы сервера: <span id="uptime"></span></p>
+    </div>
+    <script>
+      const statusCircle = document.getElementById("status-circle");
+      const serverStatus = "running"; // 'running', 'stopped', 'waiting'
+
+      if (serverStatus === "running") {
+        statusCircle.classList.remove("red", "yellow");
+        statusCircle.classList.add("green");
+      } else if (serverStatus === "stopped") {
+        statusCircle.classList.remove("green", "yellow");
+        statusCircle.classList.add("red");
+      } else if (serverStatus === "waiting") {
+        statusCircle.classList.remove("green", "red");
+        statusCircle.classList.add("yellow");
+      }
+
+      document.getElementById("start-time").textContent =
+        "Будет передана сервером";
+      document.getElementById("uptime").textContent = "Будет передано сервером";
+    </script>
+  </body>
+</html>
