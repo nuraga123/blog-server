@@ -113,13 +113,18 @@ export const login = async (req, res) => {
 // Получение данных текущего пользователя
 export const getMe = async (req, res) => {
   try {
+    if (req?.userId) return {
+      message: "Требуется авторизация",
+      status: 401,
+    }
+
     const user = await UserModel.findById(req.userId);
 
     checkUser(user, res);
 
     return res.json({ ...returnUserData(user) });
   } catch (error) {
-    errorsMessage(error, res, "getMe", 500);
+    errorsMessage(error, res, "getMe Ошибка авторизации", 500);
   }
 };
 

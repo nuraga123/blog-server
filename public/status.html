@@ -8,13 +8,43 @@
       body {
         font-family: Arial, sans-serif;
         text-align: center;
-        background-color: #f4f4f9;
+        background-color: #afaff1;
         margin: 0;
         padding: 0;
       }
+
       h1 {
         color: #333;
+        font-size: 36px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        font-weight: bold;
+        transition: color 0.1s ease;
       }
+
+      main {
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        background-color: aliceblue;
+      }
+
+      #status-text {
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        text-align: center;
+        padding: 5px;
+        font-size: 24px;
+        font-weight: bold;
+        transition: color 0.1s ease;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        letter-spacing: 1px;
+        text-wrap: nowrap;
+      }
+
       .status-circle {
         width: 100px;
         height: 100px;
@@ -22,58 +52,171 @@
         border-radius: 50%;
         background-color: green;
         animation: pulse 1.5s infinite;
+        transition: background-color 0.1s ease;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        border: 3px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+        font-weight: bold;
       }
       @keyframes pulse {
         0%,
         100% {
           transform: scale(1);
         }
-        50% {
-          transform: scale(1.1);
-        }
       }
       .green {
         background-color: green;
+        color: white;
       }
       .red {
         background-color: red;
+        color: white;
       }
       .yellow {
         background-color: yellow;
+        color: #333;
       }
       .info {
         margin-top: 20px;
         font-size: 18px;
       }
+
+      @media screen and (max-width: 500px) {
+        main {
+          max-width: 300px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+
+        .status-circle {
+          width: 70px;
+          height: 70px;
+          font-size: 30px;
+        }
+
+        #status-text {
+          font-size: 16px;
+        }
+      }
+
+      @media screen and (max-width: 330px) {
+        main {
+          max-width: 260px;
+        }
+
+        h1 {
+          font-size: 18px;
+        }
+
+        .status-circle {
+          width: 50px;
+          height: 50px;
+          font-size: 18px;
+        }
+
+        #status-text {
+          font-size: 14px;
+        }
+      }
     </style>
   </head>
   <body>
-    <h1>Добро пожаловать на Azenco сервер!</h1>
-    <div id="status-circle" class="status-circle green"></div>
-    <div class="info">
-      <p>Дата запуска сервера: <span id="start-time"></span></p>
-      <p>Время работы сервера: <span id="uptime"></span></p>
-    </div>
+    <main>
+      <h1>Добро пожаловать на Azenco сервер!</h1>
+      <div id="status-circle" class="status-circle yellow">60</div>
+      <div class="info">
+            <h3>Статус сервера</h3>
+            <div id="status-text">Находится в режиме ожидания</div>
+        </div>
+        <div>Дата запуска сервера: 
+          <br /> 
+          <strong>
+            <span id="start-time"></span>
+          </strong>
+        </div>
+        <p>Время работы сервера: 
+          <br />
+          <strong>
+            <span id="uptime"></span>
+          </strong>
+        </p>
+        <div id="count"></div>
+      </div>
+      <div id="error"></div>
+    </main>
     <script>
-      const serverResult = fetch("https://blog-server-iyxb.onrender.com/");
-      console.log(serverResult);
       const statusCircle = document.getElementById("status-circle");
-      const serverStatus = "running"; // 'running', 'stopped', 'waiting'
+      const statusText = document.getElementById("status-text");
+      const startTimeElement = document.getElementById("start-time");
+      const uptimeElement = document.getElementById("uptime");
+      const errorElement = document.getElementById("error");
 
-      if (serverStatus === "running") {
-        statusCircle.classList.remove("red", "yellow");
-        statusCircle.classList.add("green");
-      } else if (serverStatus === "stopped") {
-        statusCircle.classList.remove("green", "yellow");
-        statusCircle.classList.add("red");
-      } else if (serverStatus === "waiting") {
-        statusCircle.classList.remove("green", "red");
+      // Начальное значение обратного отсчета
+      let countdown = 61;
+
+      // Функция обновления обратного отсчета
+      const startCountdown = () => {
+        const interval = setInterval(() => {
+          countdown--;
+          statusCircle.textContent = countdown;
+
+          if (countdown <= 0) {
+            clearInterval(interval); // Остановить таймер
+            updateServerStatus(); // Обновить статус сервера
+            countdown = 61; // Сбросить таймер
+            startCountdown(); // Запустить снова
+          }
+        }, 1000); // Каждую секунду
+      };
+
+      // Функция для обновления данных сервера
+      const updateServerStatus = () => {
         statusCircle.classList.add("yellow");
-      }
+        statusText.style.backgroundColor = "yellow";
+        statusText.textContent = "Находится в режиме ожидания";
 
-      document.getElementById("start-time").textContent =
-        "Будет передана сервером";
-      document.getElementById("uptime").textContent = "Будет передано сервером";
+        fetch("https://blog-server-iyxb.onrender.com")
+          .then((response) => {
+            console.log("response");
+            console.log(response);
+
+            if (response.ok) {
+              statusCircle.classList.remove("red", "yellow");
+              statusCircle.classList.add("green");
+              statusText.style.backgroundColor = "white";
+              statusText.style.color = "green";
+              statusText.textContent = "Сервер работает";
+              startTimeElement.textContent = "Будет передана сервером"; // Заменить на данные с сервера
+              uptimeElement.textContent = "Будет передано сервером"; // Заменить на данные с сервера
+            } else {
+              errorElement.textContent = "Сервер не отвечает должным образом";
+            }
+          })
+          .catch((error) => {
+            statusText.style.color = "red";
+            statusText.style.backgroundColor = "white";
+            statusText.textContent = "Сервер не работает";
+            console.error("Ошибка обновления статуса сервера:", error);
+            statusCircle.classList.remove("green", "yellow");
+            statusCircle.classList.add("red");
+            errorElement.textContent =
+              `${error}` === "TypeError: Failed to fetch"
+                ? "Не удалось получить данные о сервере"
+                : `${error}`;
+          });
+      };
+
+      // Первоначальный запуск с задержкой 3 секунды
+      setTimeout(() => {
+        updateServerStatus(); // Первое обновление
+        startCountdown(); // Запуск обратного отсчета
+      }, 3000);
     </script>
   </body>
 </html>
